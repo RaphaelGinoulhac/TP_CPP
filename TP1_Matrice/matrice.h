@@ -5,28 +5,35 @@
 #include <cassert>
 #include <iostream>
 #include <string>
+
 using namespace std;
 
 class Matrice {
 private:
-    int m,n;
-    double* tab;
-    int* compteur;
+    int m, n;
+    double *tab;
+    int *compteur;
 
 public:
     //constructeur
-    Matrice(int lig,int col);
+    Matrice(int lig, int col);
+
     //constructeur par copie
-    Matrice(const Matrice& A);
+    Matrice(const Matrice &A);
+
     //destructeur
     ~Matrice();
-    void operator=(const Matrice& A);
-    Matrice operator*(const Matrice& B);
+
+    void operator=(const Matrice &A);
+
+    Matrice operator*(const Matrice &B);
 
     //set
-    double& operator()(int i,int j);
+    double &operator()(int i, int j);
+
     //get
     double operator()(int i, int j) const;
+
     void affiche();
 };
 

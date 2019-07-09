@@ -9,23 +9,23 @@
 
 
 //coefficients aléatoires entre 0 et 4 pour simplifier
-Matrice matrice_aleatoire(int m,int n){
-    Matrice M(m,n);
-    for (int i=0;i<m;i++){
-        for (int j=0;j<n;j++){
-            M(i,j)=rand()%5;
+Matrice matrice_aleatoire(int m, int n) {
+    Matrice M(m, n);
+    for (int i = 0; i < m; i++) {
+        for (int j = 0; j < n; j++) {
+            M(i, j) = rand() % 5;
         }
-   }
-   return M;
+    }
+    return M;
 }
 
 
-int main(){
+int main() {
     srand(time(0));
-    cout << "On va generer et multiplier 2 matrices aleatoires, de taille 2x2 (taille qu'on pourrait changer)" << endl;
-    Matrice M=matrice_aleatoire(2,2);
-    Matrice N=matrice_aleatoire(2,2);
-    Matrice O=M*N;
+    cout << "On va generer et multiplier 2 matrices aleatoires, de taille 2x3 et 3x2 (taille qu'on pourrait changer)" << endl;
+    Matrice M = matrice_aleatoire(2, 3);
+    Matrice N = matrice_aleatoire(3, 2);
+    Matrice O = M * N;
     Matrice P(O);
     cout << "Affichage de M" << endl;
     M.affiche();
@@ -36,12 +36,12 @@ int main(){
     cout << "Affichage de P, qui est une shallow copy de O" << endl;
     P.affiche();
 
-    O(0,1)=99; //on modifie O
+    O(0, 1) = 99; //on modifie O
     cout << "Affichage de O modifiee" << endl;
     O.affiche();
     cout << "Affichage de P, qui est une shallow copy de O (on voit que le meme coefficient a ete modifie)" << endl;
     P.affiche();
 
 
-	return 0;
+    return 0;
 }
