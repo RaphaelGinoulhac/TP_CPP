@@ -6,6 +6,7 @@
 #include <string>
 #include <vector>
 #include <algorithm>
+
 using namespace std;
 
 class Eleve {
@@ -18,18 +19,28 @@ public:
 
 };
 
-class CompareNom{
+class CompareNom {
 public:
-    int* ptr;
-    CompareNom(int* compteur);
-    bool operator()(Eleve a, Eleve b) const {(*ptr)++;return a.nom<b.nom;}
+    int *ptr;
+
+    CompareNom(int *compteur);
+
+    bool operator()(Eleve a, Eleve b) const {
+        (*ptr)++;
+        return a.nom < b.nom;
+    }
 };
 
-class CompareNote{
+class CompareNote {
 public:
-    int* ptr;
-    CompareNote(int* compteur);
-    bool operator()(Eleve a, Eleve b) const {(*ptr)++;return a.note>b.note;}
+    int *ptr;
+
+    CompareNote(int *compteur);
+
+    bool operator()(Eleve a, Eleve b) const {
+        (*ptr)++;
+        return a.note > b.note;
+    }
 };
 
 #endif
