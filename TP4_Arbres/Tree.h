@@ -10,6 +10,7 @@
 #include <iostream>
 #include <queue>
 #include <algorithm>
+#include <stdexcept>
 
 using namespace std;
 
@@ -38,24 +39,29 @@ public:
     int nbSons();
 
     // Return the son at position pos, if any (considering left-most son is at position 0)
+    //* @throws vector::_M_range_check if pos is not a valid position (between 0 and nbSons-1) and returns this
     Tree *getSon(int pos);
 
     // Replace the existing son at position pos with newSon (left-most son at position 0)
+    //* @throws out_of_range if pos is not a valid position (between 0 and nbSons-1)
     void setSon(int pos, Tree *newSon);
 
     // Add newSon as supplementary right-most son of this node
     void addAsLastSon(Tree *newSon);
 
     // Remove right-most son of this node
+    //* @throws domain_error if the tree doesn't have any son
     void removeLastSon();
 
     //displays the tree
     void display(string prefix = "", string indent = " ");
 
     //Insert extra son at position pos, if pos exists
+    //* @throws out_of_range if pos is not a valid position (between 0 and nbSons-1)
     void addSon(int pos, Tree *son);
 
     //Remove son at position pos, thus reducing nbSons
+    //* @throws out_of_range if pos is not a valid position (between 0 and nbSons-1)
     void removeSon(int pos);
 
     //Parcours d'arbre
@@ -65,6 +71,7 @@ public:
 
     void depthFirstAscending();
 
+    //Profondeurs max et min
     int maxDepth();
 
     int minDepth();
@@ -109,12 +116,13 @@ template<typename T>
 
 Tree<T> *Tree<T>::getSon(int pos) {
     try {
-        if (pos < 0 || nbSons() <= pos)
-            throw string("Mauvaise valeur de pos");
-        return sons[pos];
+        Tree *fils = sons.at(pos);
+        return fils;
     }
-    catch (string const &chaine) {
-        cerr << chaine << endl;
+        //Si on a indique une mauvaise position ou bien si le noeud n'a aucun fils, on retourne le noeud lui-meme
+    catch (exception const &e) {
+        cerr << "Erreur : " << e.what() << ", le fils demande n'existe pas, l'arbre lui-meme est retourne " <<endl;
+        return this;
     }
 }
 
@@ -122,15 +130,12 @@ Tree<T> *Tree<T>::getSon(int pos) {
 template<typename T>
 
 void Tree<T>::setSon(int pos, Tree<T> *newSon) {
-    try {
-        if (pos < 0 || nbSons() <= pos)
-            throw string("Mauvaise valeur de pos");
-        delete sons[pos];
-        sons[pos] = newSon;
-    }
-    catch (string const &chaine) {
-        cerr << chaine << endl;
-    }
+
+    if (pos < 0 || nbSons() <= pos)
+        throw out_of_range("Mauvaise valeur de pos, newSon n'a pas ete place");
+    delete sons[pos];
+    sons[pos] = newSon;
+
 }
 
 // Add newSon as supplementary right-most son of this node
@@ -144,14 +149,11 @@ void Tree<T>::addAsLastSon(Tree<T> *newSon) {
 template<typename T>
 
 void Tree<T>::removeLastSon() {
-    try {
-        if (nbSons() <= 0)
-            throw string("Cet arbre n'a pas de fils");
-        sons.pop_back();
-    }
-    catch (string const &chaine) {
-        cerr << chaine << endl;
-    }
+
+    if (nbSons() <= 0)
+        throw domain_error("Cet arbre n'a pas de fils");
+    sons.pop_back();
+
 }
 
 template<typename T>
@@ -166,27 +168,21 @@ void Tree<T>::display(string prefix, string indent) {
 
 template<typename T>
 void Tree<T>::addSon(int pos, Tree *son) {
-    try {
-        if (pos < 0 || nbSons() <= pos)
-            throw string("Mauvaise valeur de pos");
-        sons.insert(sons.begin() + pos, son);
-    }
-    catch (string const &chaine) {
-        cerr << chaine << endl;
-    }
+
+    if (pos < 0 || nbSons() <= pos)
+        throw out_of_range("Mauvaise valeur de pos, le fils n'a pas ete ajoute");
+    sons.insert(sons.begin() + pos, son);
+
 }
 
 
 template<typename T>
 void Tree<T>::removeSon(int pos) {
-    try {
-        if (pos < 0 || nbSons() <= pos)
-            throw string("Mauvaise valeur de pos");
-        sons.erase(sons.begin() + pos);
-    }
-    catch (string const &chaine) {
-        cerr << chaine << endl;
-    }
+
+    if (pos < 0 || nbSons() <= pos)
+        throw out_of_range("Mauvaise valeur de pos, aucun fils n'a ete supprime");
+    sons.erase(sons.begin() + pos);
+
 }
 
 template<typename T>
@@ -223,13 +219,10 @@ void Tree<T>::depthFirstAscending() {
 template<typename T>
 int Tree<T>::maxDepth() {
     int maxi = 0;
-    if (sons.size() > 0) {
-        vector<int> sonsDepth(sons.size(), 0);
-        for (int i = 0; i < sons.size(); i++) {
-            sonsDepth[i] = sons[i]->maxDepth();
-        }
-        maxi = *max_element(begin(sonsDepth), end(sonsDepth));
-    }
+
+    for (int i = 0; i < sons.size(); i++)
+        maxi = max(maxi, sons[i]->maxDepth());
+
     return maxi + 1;
 
 }

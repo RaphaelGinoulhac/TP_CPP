@@ -25,26 +25,25 @@ int IntTree::nbSons() {
 //Cas d'erreur : pos n'est pas entre 0 et nbSons-1, on veut alors acceder a un element qui n'est pas dans le vecteur
 IntTree *IntTree::getSon(int pos) {
     try {
-        if (pos < 0 || nbSons() <= pos)
-            throw string("Mauvaise valeur de pos");
-        return sons[pos];
+        IntTree *fils = sons.at(pos);
+        return fils;
     }
-    catch (string const &chaine) {
-        cerr << chaine << endl;
+    //Si on a indique une mauvaise position ou bien si le noeud n'a aucun fils, on retourne le noeud lui-meme
+    catch (exception const &e) {
+        cerr << "Erreur : " << e.what() << ", le fils demande n'existe pas, l'arbre lui-meme est retourne " <<endl;
+        return this;
     }
+
 }
 
 //idem
 void IntTree::setSon(int pos, IntTree *newSon) {
-    try {
-        if (pos < 0 || nbSons() <= pos)
-            throw string("Mauvaise valeur de pos");
-        delete sons[pos];
-        sons[pos] = newSon;
-    }
-    catch (string const &chaine) {
-        cerr << chaine << endl;
-    }
+
+    if (pos < 0 || nbSons() <= pos)
+        throw out_of_range("Mauvaise valeur de pos, newSon n'a pas ete place");
+    delete sons[pos];
+    sons[pos] = newSon;
+
 }
 
 
@@ -54,14 +53,11 @@ void IntTree::addAsLastSon(IntTree *newSon) {
 
 //erreur s'il n'y a pas de fils
 void IntTree::removeLastSon() {
-    try {
-        if (nbSons() <= 0)
-            throw string("Cet arbre n'a pas de fils");
-        sons.pop_back();
-    }
-    catch (string const &chaine) {
-        cerr << chaine << endl;
-    }
+
+    if (nbSons() <= 0)
+        throw domain_error("Cet arbre n'a pas de fils");
+    sons.pop_back();
+
 }
 
 

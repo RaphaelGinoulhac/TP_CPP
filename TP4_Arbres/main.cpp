@@ -1,11 +1,13 @@
 #include "IntTree.h"
 #include "Tree.h"
 
+
 //Raphael GINOULHAC
 
 
 
 int main() {
+    //Creation d'un IntTree
     IntTree *root = new IntTree(12);
     root->addAsLastSon((new IntTree(8)));
     root->getSon(0)->addAsLastSon(new IntTree(4));
@@ -17,6 +19,7 @@ int main() {
     root->display("* ");
     cout << endl;
 
+    //Creation d'un Tree
     Tree<float> *tree = new Tree<float>(12.7);
     tree->addAsLastSon(new Tree<float>(-5));
     tree->getSon(0)->addAsLastSon(new Tree<float>(15.2));
@@ -26,33 +29,58 @@ int main() {
     tree->getSon(1)->getSon(0)->addAsLastSon(new Tree<float>(3));
     tree->getSon(1)->getSon(0)->getSon(0)->addAsLastSon(new Tree<float>(3.1));
 
-
     tree->display("* ", "  ");
 
-    cout << "Parcours en profondeur d'abord en sortant"<< endl;
+    cout << "Parcours en profondeur d'abord en sortant" << endl;
     tree->depthFirstAscending();
-    cout << "Parcours en profondeur d'abord en entrant "<< endl;
+    cout << "Parcours en profondeur d'abord en entrant " << endl;
     tree->depthFirstDescending();
-    cout << "Parcours en largeur d'abord"<< endl;
+    cout << "Parcours en largeur d'abord" << endl;
     tree->breadthFirst();
 
-    int mindepth = tree->minDepth();
-    cout << "Profondeur minimale : " << mindepth << endl;
-    int maxdepth = tree->maxDepth();
-    cout << "Profondeur maximale : " << maxdepth << endl;
+
+    cout << "Profondeur minimale : " << tree->minDepth() << endl;
+
+    cout << "Profondeur maximale : " << tree->maxDepth() << endl;
 
 
-
-    bool testGestionErreur = false;
+    bool testGestionErreur = true;
     if (testGestionErreur) {
+
         //Test gestion d'erreur pour IntTree
-        root->setSon(-1, new IntTree(8));
-        root->getSon(-1);
-        root->getSon(1)->getSon(0)->getSon(0)->removeLastSon();
+        IntTree* fils = root->getSon(-1);
+        fils->display();
+
+        try {
+            root->getSon(1)->getSon(0)->getSon(0)->removeLastSon();
+        }
+        catch (exception const &e) {
+            cerr << "Erreur : " << e.what() << endl;
+        }
+
+        try {
+            root->setSon(-1, new IntTree(8));
+
+        }
+        catch (exception const &e) {
+            cerr << "Erreur : " << e.what() << endl;
+            root->setSon(1, new IntTree(8));
+        }
 
         //Pour Tree
-        tree->addSon(-1, new Tree<float>(3.14));
-        tree->removeSon(-1);
+        try {
+            tree->addSon(-1, new Tree<float>(3.14));
+        }
+
+        catch (exception const &e) {
+            cerr << "Erreur : " << e.what() << endl;
+        }
+
+        try { tree->removeSon(-1); }
+
+        catch (exception const &e) {
+            cerr << "Erreur : " << e.what() << endl;
+        }
     }
 
 
