@@ -11,7 +11,7 @@ class IntTree {
     // Node information
     int data;
     // Sequence of sons (empty if none)
-    std::vector<IntTree *> sons;
+    vector<IntTree *> sons;
 public:
     // Create a node with given information
     IntTree(int d);

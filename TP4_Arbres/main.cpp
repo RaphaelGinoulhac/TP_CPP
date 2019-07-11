@@ -1,11 +1,7 @@
 #include "IntTree.h"
+#include "Tree.h"
 
 //Raphael GINOULHAC
-//Pour les dernieres fonctions de Tree T, j'ai une erreur, il faut rajouter template devant vector sans doute
-//Il n'y a pas beaucoup d'erreur a gerer
-//Il faut recopier toutes les fonctions de inttree pour tree si on veut s'en servir en pratique
-//Les parcours en bonus consistent juste en changer l'ordre dans lequel on affiche le noeud courant et on parcourt les fils
-//En largeur, il suffit d'importer <queue>
 
 
 
@@ -19,16 +15,49 @@ int main() {
     root->getSon(1)->getSon(0)->addAsLastSon(new IntTree(15));
 
     root->display("* ");
+    cout << endl;
 
-    //IntTree* root2 = new IntTree(12);
-    //root2->removeLastSon();
+    Tree<float> *tree = new Tree<float>(12.7);
+    tree->addAsLastSon(new Tree<float>(-5));
+    tree->getSon(0)->addAsLastSon(new Tree<float>(15.2));
+    tree->getSon(0)->addAsLastSon(new Tree<float>(300));
+    tree->addAsLastSon(new Tree<float>(24));
+    tree->getSon(1)->addAsLastSon(new Tree<float>(-10));
+    tree->getSon(1)->getSon(0)->addAsLastSon(new Tree<float>(3));
+    tree->getSon(1)->getSon(0)->getSon(0)->addAsLastSon(new Tree<float>(3.1));
 
-    //Test gestion d'erreur
-    root->setSon(-1, new IntTree(8));
-    root->getSon(-1);
-    root->getSon(1)->getSon(0)->getSon(0)->removeLastSon();
+
+    tree->display("* ", "  ");
+
+    cout << "Parcours en profondeur d'abord en sortant"<< endl;
+    tree->depthFirstAscending();
+    cout << "Parcours en profondeur d'abord en entrant "<< endl;
+    tree->depthFirstDescending();
+    cout << "Parcours en largeur d'abord"<< endl;
+    tree->breadthFirst();
+
+    int mindepth = tree->minDepth();
+    cout << "Profondeur minimale : " << mindepth << endl;
+    int maxdepth = tree->maxDepth();
+    cout << "Profondeur maximale : " << maxdepth << endl;
+
+
+
+    bool testGestionErreur = false;
+    if (testGestionErreur) {
+        //Test gestion d'erreur pour IntTree
+        root->setSon(-1, new IntTree(8));
+        root->getSon(-1);
+        root->getSon(1)->getSon(0)->getSon(0)->removeLastSon();
+
+        //Pour Tree
+        tree->addSon(-1, new Tree<float>(3.14));
+        tree->removeSon(-1);
+    }
+
 
     delete root;
+    delete tree;
 
 
     return 0;

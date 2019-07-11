@@ -8,6 +8,8 @@
 #include <vector>
 #include <string>
 #include <iostream>
+#include <queue>
+#include <algorithm>
 
 using namespace std;
 
@@ -18,7 +20,7 @@ class Tree {
     // Node information
     T data;
     // Sequence of sons (empty if none)
-    std::vector<Tree *> sons;
+    vector<Tree *> sons;
 public:
     // Create a node with given information
     Tree(T d);
@@ -51,10 +53,21 @@ public:
     void display(string prefix = "", string indent = " ");
 
     //Insert extra son at position pos, if pos exists
-    void addSon(int pos, Tree<T> *son);
+    void addSon(int pos, Tree *son);
 
     //Remove son at position pos, thus reducing nbSons
     void removeSon(int pos);
+
+    //Parcours d'arbre
+    void breadthFirst();
+
+    void depthFirstDescending();
+
+    void depthFirstAscending();
+
+    int maxDepth();
+
+    int minDepth();
 };
 
 
@@ -152,7 +165,7 @@ void Tree<T>::display(string prefix, string indent) {
 
 
 template<typename T>
-void Tree<T>::addSon(int pos, Tree<T> *son) {
+void Tree<T>::addSon(int pos, Tree *son) {
     try {
         if (pos < 0 || nbSons() <= pos)
             throw string("Mauvaise valeur de pos");
@@ -175,5 +188,79 @@ void Tree<T>::removeSon(int pos) {
         cerr << chaine << endl;
     }
 }
+
+template<typename T>
+void Tree<T>::breadthFirst() {
+    queue<Tree *> q;
+    q.push(this);
+
+    while (!q.empty()) {
+        Tree *next = q.front();
+        cout << next->data << endl;
+        for (int i = 0; i < next->nbSons(); i++) {
+            q.push(next->getSon(i));
+        }
+        q.pop();
+    }
+}
+
+template<typename T>
+void Tree<T>::depthFirstDescending() {
+    cout << data << endl;
+    for (int i = 0; i < sons.size(); i++) {
+        sons[i]->depthFirstDescending();
+    }
+}
+
+template<typename T>
+void Tree<T>::depthFirstAscending() {
+    for (int i = 0; i < sons.size(); i++) {
+        sons[i]->depthFirstAscending();
+    }
+    cout << data << endl;
+}
+
+template<typename T>
+int Tree<T>::maxDepth() {
+    int maxi = 0;
+    if (sons.size() > 0) {
+        vector<int> sonsDepth(sons.size(), 0);
+        for (int i = 0; i < sons.size(); i++) {
+            sonsDepth[i] = sons[i]->maxDepth();
+        }
+        maxi = *max_element(begin(sonsDepth), end(sonsDepth));
+    }
+    return maxi + 1;
+
+}
+
+template<typename T>
+int Tree<T>::minDepth() {
+    queue<Tree *> q_tree;
+    queue<int> q_count;
+
+    q_tree.push(this);
+    q_count.push(1);
+
+    Tree *current;
+    int count;
+
+    while (!q_tree.empty()) {
+        current = q_tree.front();
+        count = q_count.front();
+
+        if (current->nbSons() == 0) {
+            return count;
+        }
+
+        for (int i = 0; i < current->nbSons(); i++) {
+            q_tree.push(current->getSon(i));
+            q_count.push(count + 1);
+        }
+        q_tree.pop();
+        q_count.pop();
+    }
+}
+
 
 #endif //TP4_ARBRES_TREE_H
