@@ -16,7 +16,7 @@ int affiche_modifications(const vector<vector<int> > &d, const string &s1, const
     //On utilise une pile pour stocker les operations a effectuer quand on remonte le chemin dans la matrice
     stack<string> pile;
 
-
+//indiquer quel caractere il faut modifier
     while (current_i != 0 || current_j != 0) {
         current_value = d[current_i][current_j];
         //On est sur la premiere ligne, on ne peut qu'aller a gauche
@@ -32,8 +32,8 @@ int affiche_modifications(const vector<vector<int> > &d, const string &s1, const
             //On regarde quelle direction va minimiser la distance, pour continuer le chemin
             //Rajouter le cout?
             mini = min(min(d[current_i - 1][current_j], d[current_i][current_j - 1]), d[current_i - 1][current_j - 1]);
-            if (damerau && current_i > 1 && current_j > 1 && s1[current_i] == s2[current_j - 1] &&
-                s1[current_i - 1] == s2[current_j])
+            if (damerau && current_i > 1 && current_j > 1 && s1[current_i-1] == s2[current_j - 2] &&
+                s1[current_i - 2] == s2[current_j-1])
                 mini = min(mini, d[current_i - 2][current_j - 2]);
 
             if (damerau && current_i > 1 && current_j > 1) {
@@ -167,8 +167,8 @@ int main() {
     string s1 = "ecoles";
     string s2 = "eclose";
 
-    //s1 = "pr";
-    //s2 = "rp";
+   // s1 = "pr";
+   // s2 = "rp";
 
     cout << "Les deux mots sont : " << s1 << " et " << s2 << endl;
 
