@@ -55,7 +55,7 @@ int affiche_modifications(const vector<vector<int> > &d, const string &s1, const
                     pile.push("insertion " + string(1, s2[current_j - 1]));
                 current_j--;
             }
-            //la condition est redondante vu que c'est le dernier cas possible mais on la laisse par souci de clarte
+                //la condition est redondante vu que c'est le dernier cas possible mais on la laisse par souci de clarte
             else if (damerau && current_i > 1 && current_j > 1) {
                 if (mini == d[current_i - 2][current_j - 2]) {
                     if (current_value != d[current_i - 2][current_j - 2]) {
@@ -138,6 +138,7 @@ void distance_levenshtein_damerau(const string &s1, const string &s2) {
 
 }
 
+//Meme chose pour damerau, juste un bloc if a rajouter et on utilise 3 vector
 int distance_levenshtein_lineaire_aux(const string &s1, const string &s2) {
     //On suppose que la plus petite chaine est s2 (pour gagner en complexite spatiale)
     const std::size_t len1 = s1.size(), len2 = s2.size();
@@ -161,6 +162,7 @@ int distance_levenshtein_lineaire_aux(const string &s1, const string &s2) {
     }
     return d0[len2];
 }
+
 
 void distance_levenshtein_lineaire(const string &s1, const string &s2) {
     int dist;
