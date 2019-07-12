@@ -43,13 +43,15 @@ int main() {
 
     cout << "Profondeur maximale : " << tree->maxDepth() << endl;
 
-
+    //les messages d'erreur peuvent s'afficher au milieu des autres affichages precedents
     bool testGestionErreur = true;
     if (testGestionErreur) {
 
         //Test gestion d'erreur pour IntTree
         IntTree* fils = root->getSon(-1);
         fils->display();
+        delete fils;
+
 
         try {
             root->getSon(1)->getSon(0)->getSon(0)->removeLastSon();
@@ -81,6 +83,10 @@ int main() {
         catch (exception const &e) {
             cerr << "Erreur : " << e.what() << endl;
         }
+
+        Tree<float>* filss = tree->getSon(-1);
+        filss->display();
+        delete filss;
     }
 
 

@@ -30,7 +30,7 @@ public:
     int nbSons();
 
     // Return the son at position pos, if any (considering left-most son is at position 0)
-    //* @throws vector::_M_range_check if pos is not a valid position (between 0 and nbSons-1) and returns this
+    //* @throws vector::_M_range_check if pos is not a valid position (between 0 and nbSons-1) and returns a tree with data=0
     IntTree *getSon(int pos);
 
     // Replace the existing son at position pos with newSon (left-most son at position 0)
@@ -45,5 +45,5 @@ public:
     void removeLastSon();
 
     //displays the tree
-    void display(string prefix = "", string indent = " ");
+    void display(string prefix = "* ", string indent = " ");
 };

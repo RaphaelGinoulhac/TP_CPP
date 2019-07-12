@@ -39,7 +39,7 @@ public:
     int nbSons();
 
     // Return the son at position pos, if any (considering left-most son is at position 0)
-    //* @throws vector::_M_range_check if pos is not a valid position (between 0 and nbSons-1) and returns this
+    //* @throws vector::_M_range_check if pos is not a valid position (between 0 and nbSons-1) and returns a tree with the same data as the father
     Tree *getSon(int pos);
 
     // Replace the existing son at position pos with newSon (left-most son at position 0)
@@ -54,7 +54,7 @@ public:
     void removeLastSon();
 
     //displays the tree
-    void display(string prefix = "", string indent = " ");
+    void display(string prefix = "* ", string indent = " ");
 
     //Insert extra son at position pos, if pos exists
     //* @throws out_of_range if pos is not a valid position (between 0 and nbSons-1)
@@ -121,8 +121,9 @@ Tree<T> *Tree<T>::getSon(int pos) {
     }
         //Si on a indique une mauvaise position ou bien si le noeud n'a aucun fils, on retourne le noeud lui-meme
     catch (exception const &e) {
-        cerr << "Erreur : " << e.what() << ", le fils demande n'existe pas, l'arbre lui-meme est retourne " <<endl;
-        return this;
+        cerr << "Erreur : " << e.what() << ", le fils demande n'existe pas,  un arbre avec le meme noeud que le pere est retourne " <<endl;
+        //On ne peut pas renvoyer un Tree(0) comme avec IntTree, on renvoit donc un Tree contenant data
+        return new Tree(data);
     }
 }
 

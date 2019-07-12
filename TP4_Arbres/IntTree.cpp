@@ -30,8 +30,8 @@ IntTree *IntTree::getSon(int pos) {
     }
     //Si on a indique une mauvaise position ou bien si le noeud n'a aucun fils, on retourne le noeud lui-meme
     catch (exception const &e) {
-        cerr << "Erreur : " << e.what() << ", le fils demande n'existe pas, l'arbre lui-meme est retourne " <<endl;
-        return this;
+        cerr << "Erreur : " << e.what() << ", le fils demande n'existe pas, un arbre avec le noeud 0 est retourne " <<endl;
+        return new IntTree(0);
     }
 
 }
