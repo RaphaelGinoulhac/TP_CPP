@@ -16,47 +16,56 @@ int affiche_modifications(const vector<vector<int> > &d, const string &s1, const
     //On utilise une pile pour stocker les operations a effectuer quand on remonte le chemin dans la matrice
     stack<string> pile;
 
+
 //indiquer quel caractere il faut modifier
     while (current_i != 0 || current_j != 0) {
         current_value = d[current_i][current_j];
         //On est sur la premiere ligne, on ne peut qu'aller a gauche
         if (current_i == 0) {
-            if (current_value != d[current_i][current_j - 1]) pile.push("insertion");
+            if (current_value != d[current_i][current_j - 1]) pile.push("insertion " + string(1, s2[current_j - 1]));
             current_j--;
             //On est sur la premiere colonne, on ne peut qu'aller en haut
         } else if (current_j == 0) {
-            if (current_value != d[current_i - 1][current_j]) pile.push("effacement");
+            if (current_value != d[current_i - 1][current_j]) pile.push("effacement " + string(1, s1[current_i - 1]));
             current_i--;
 
         } else {
             //On regarde quelle direction va minimiser la distance, pour continuer le chemin
             //Rajouter le cout?
             mini = min(min(d[current_i - 1][current_j], d[current_i][current_j - 1]), d[current_i - 1][current_j - 1]);
-            if (damerau && current_i > 1 && current_j > 1 && s1[current_i-1] == s2[current_j - 2] &&
-                s1[current_i - 2] == s2[current_j-1])
+
+            if (damerau && current_i > 1 && current_j > 1 && s1[current_i - 1] == s2[current_j - 2] &&
+                s1[current_i - 2] == s2[current_j - 1])
                 mini = min(mini, d[current_i - 2][current_j - 2]);
 
-            if (damerau && current_i > 1 && current_j > 1) {
+
+            if (mini == d[current_i - 1][current_j - 1]) {
+                if (current_value != d[current_i - 1][current_j - 1])
+                    pile.push("substitution " + string(1, s1[current_i - 1]) + " en " + string(1, s2[current_j - 1]));
+                current_i--;
+                current_j--;
+
+            } else if (mini == d[current_i - 1][current_j]) {
+                if (current_value != d[current_i - 1][current_j])
+                    pile.push("effacement " + string(1, s1[current_i - 1]));
+                current_i--;
+
+            } else if (mini == d[current_i][current_j - 1]) {
+                if (current_value != d[current_i][current_j - 1])
+                    pile.push("insertion " + string(1, s2[current_j - 1]));
+                current_j--;
+            }
+            //la condition est redondante vu que c'est le dernier cas possible mais on la laisse par souci de clarte
+            else if (damerau && current_i > 1 && current_j > 1) {
                 if (mini == d[current_i - 2][current_j - 2]) {
-                    if (current_value != d[current_i - 2][current_j - 2]) pile.push("transposition");
+                    if (current_value != d[current_i - 2][current_j - 2]) {
+                        pile.push("transposition " + string(1, s1[current_i - 1]) + " et " +
+                                  string(1, s1[current_i - 2]));
+                    }
                     current_i -= 2;
                     current_j -= 2;
                     continue;
                 }
-            }
-            if (mini == d[current_i - 1][current_j]) {
-                if (current_value != d[current_i - 1][current_j]) pile.push("effacement");
-                current_i--;
-
-            } else if (mini == d[current_i][current_j - 1]) {
-                if (current_value != d[current_i][current_j - 1]) pile.push("insertion");
-                current_j--;
-
-            } else if (mini == d[current_i - 1][current_j - 1]) {
-                if (current_value != d[current_i - 1][current_j - 1]) pile.push("substitution");
-                current_i--;
-                current_j--;
-
             }
         }
     }
@@ -115,10 +124,10 @@ void distance_levenshtein_damerau(const string &s1, const string &s2) {
     for (int i = 1; i <= len1; ++i) {
         for (int j = 1; j <= len2; ++j) {
             //pas le meme cout
-            d[i][j] = min(min(d[i - 1][j] + 1, d[i][j - 1] + 1), d[i - 1][j - 1] + (s1[i] == s2[j] ? 0 : 1));
+            d[i][j] = min(min(d[i - 1][j] + 1, d[i][j - 1] + 1), d[i - 1][j - 1] + (s1[i - 1] == s2[j - 1] ? 0 : 1));
             //seule différence avec levenshtein
-            if (i > 1 && j > 1 && s1[i] == s2[j - 1] && s1[i - 1] == s2[j]) {
-                d[i][j] = min(d[i][j], d[i - 2][j - 2] + (s1[i] == s2[j] ? 0 : 1));
+            if (i > 1 && j > 1 && s1[i - 1] == s2[j - 2] && s1[i - 2] == s2[j - 1]) {
+                d[i][j] = min(d[i][j], d[i - 2][j - 2] + (s1[i - 1] == s2[j - 1] ? 0 : 1));
             }
         }
     }
@@ -167,8 +176,8 @@ int main() {
     string s1 = "ecoles";
     string s2 = "eclose";
 
-   // s1 = "pr";
-   // s2 = "rp";
+    // s1 = "pr";
+    // s2 = "rp";
 
     cout << "Les deux mots sont : " << s1 << " et " << s2 << endl;
 
