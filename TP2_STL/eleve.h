@@ -15,6 +15,8 @@ public:
     int note;
 
     //constructeur
+    Eleve();
+
     Eleve(string Nom, int Note);
 
 };
@@ -25,7 +27,7 @@ public:
 
     CompareNom(int *compteur);
 
-    bool operator()(Eleve a, Eleve b) const {
+    bool operator()(const Eleve &a, const Eleve &b) const {
         (*ptr)++;
         return a.nom < b.nom;
     }
@@ -37,7 +39,7 @@ public:
 
     CompareNote(int *compteur);
 
-    bool operator()(Eleve a, Eleve b) const {
+    bool operator()(const Eleve &a, const Eleve &b) const {
         (*ptr)++;
         return a.note > b.note;
     }

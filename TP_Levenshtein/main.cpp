@@ -9,7 +9,7 @@ using namespace std;
 //Raphael GINOULHAC
 
 
-int affiche_modifications(const vector<vector<int> > &d, const string &s1, const string &s2, bool damerau = false) {
+void affiche_modifications(const vector<vector<int> > &d, const string &s1, const string &s2, bool damerau = false) {
     //minimum entre les differentes valeurs en haut, a gauche, et en haut a gauche
     // valeur actuelle de d[i][j]; et position dans la matrice
     int mini, current_value, current_i = d.size() - 1, current_j = d[0].size() - 1;
