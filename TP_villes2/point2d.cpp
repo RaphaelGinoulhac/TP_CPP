@@ -6,6 +6,7 @@
 ostream &operator<<(ostream &os, Point2D const &pt) {
     return os << "(" << pt.x() << "," << pt.y() << ")";
 }
-ostream &operator<<(ostream &os, Point2D* const &p) {
+
+ostream &operator<<(ostream &os, Point2D *const &p) {
     return os << *p;
 }
