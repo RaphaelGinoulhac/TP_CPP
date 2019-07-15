@@ -25,9 +25,15 @@ public:
     inline float y() const { return _y; }
 
     //Operator< to get a total order
-    bool operator<(const Point2D& b) const {
-       return _x < b._x || ((_x==b._x ) && (_y<b._y));
+    bool operator<(const Point2D &b) const {
+        return _x < b._x || ((_x == b._x) && (_y < b._y));
     };
+
+    bool operator==(const Point2D &b) const {
+        return _x == b._x && _y < b._y;
+    };
+
+
 };
 
 //
@@ -36,19 +42,3 @@ public:
 ostream &operator<<(ostream &os, Point2D const &pt);
 
 ostream &operator<<(ostream &os, Point2D *const &p);
-
-
-//Comparison operator for Point2D for the map used in histogram_of_coordinate_repetitions. The order is total
-//That way we don't implement operator< directly in Point2D (as another order could be more natural between Point2D)
-//struct comparePoint2D {//: binary_function<Point2D,Point2D,bool>{
-//    bool operator()(const Point2D &a, const Point2D &b) const {
-//        return a.x() < b.x() || ((a.x() == b.x()) && (a.y() < b.y()));
-//    }
-//};
-//
-//struct compareTown {//: binary_function<Point2D,Point2D,bool>{
-//    bool operator()(const Town &a, const Town &b) const {
-//        comparePoint2D compare;
-//        return a.name() < b.name() || ((a.name() == b.name()) && (compare(a.point(), b.point())));
-//    }
-//};

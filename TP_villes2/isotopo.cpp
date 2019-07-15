@@ -10,7 +10,7 @@
 #include <set>
 #include <map>
 #include <algorithm>
-#include <iterator>
+
 
 using namespace std;
 
@@ -55,7 +55,7 @@ map<Point2D, int> histogram_of_coordinate_repetitions(const vector<Town> &towns)
 }
 
 
-void q3(const vector<Town> &towns, const map<string, int> &town_names, const map<Point2D, int> &town_coordinates) {
+set<Town> q3(const vector<Town> &towns, const map<string, int> &town_names, const map<Point2D, int> &town_coordinates) {
     set<Town> N, C, intersect;
     cout << "Creating the set N of towns whose name is repeated at least once, and C of towns whose coordinates are "
             "repeated at least once" << endl;
@@ -81,11 +81,28 @@ void q3(const vector<Town> &towns, const map<string, int> &town_names, const map
     auto size_of_intersect = distance(intersect.begin(), intersect.end());
 
     cout << "The intersection of N and C has " << size_of_intersect << " elements" << endl;
+    return intersect;
 }
 
 
-void q4(const set<Town>& N, const set<Town>& C){
-    
+void q4(const set<Town> &intersect) {
+    int counter = 0;
+    //Selon l'enonce, les villes v1, v2, v3, v4 sont toutes dans N intersect C.
+    //On fait alors une recherche exhaustive dans l'ensemble intersect, et on gagne du temps en initialisant les iterateurs
+    //de chaque boucle au successeur de l'iterateur de la boucle precedente.
+    for (auto it = intersect.begin(); it != intersect.end(); it++) {
+        for (auto it2 = next(it, 1); it2 != intersect.end(); it2++) {
+            for (auto it3 = next(it2, 1); it3 != intersect.end(); it3++) {
+                for (auto it4 = next(it3, 1); it4 != intersect.end(); it4++) {
+                    if (it->point() == it2->point() && it->name() == it3->name() && it3->point() == it4->point() &&
+                        it2->name() == it4->name())
+                        counter++;
+                }
+            }
+        }
+    }
+    cout << "The number of towns where we can be mistaken by hearing about a town A close to a town B is : " << counter
+         << endl;
 }
 
 
@@ -130,7 +147,10 @@ int main() {
     map<Point2D, int> town_coordinates = histogram_of_coordinate_repetitions(towns);
 
     //Q3
-    q3(towns, town_names, town_coordinates);
+    set<Town> intersect = q3(towns, town_names, town_coordinates);
+
+    //Q4
+    q4(intersect);
 
     // That's all folks
     return 0;
