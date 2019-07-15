@@ -3,6 +3,7 @@
 #include <iostream>
 #include <vector>
 #include <stack>
+#include <time.h>
 
 using namespace std;
 
@@ -17,7 +18,6 @@ void affiche_modifications(const vector<vector<int> > &d, const string &s1, cons
     stack<string> pile;
 
 
-//indiquer quel caractere il faut modifier
     while (current_i != 0 || current_j != 0) {
         current_value = d[current_i][current_j];
         //On est sur la premiere ligne, on ne peut qu'aller a gauche
@@ -31,7 +31,6 @@ void affiche_modifications(const vector<vector<int> > &d, const string &s1, cons
 
         } else {
             //On regarde quelle direction va minimiser la distance, pour continuer le chemin
-            //Rajouter le cout?
             mini = min(min(d[current_i - 1][current_j], d[current_i][current_j - 1]), d[current_i - 1][current_j - 1]);
 
             if (damerau && current_i > 1 && current_j > 1 && s1[current_i - 1] == s2[current_j - 2] &&
@@ -89,7 +88,7 @@ void affiche_matrice(const vector<vector<int> > &d) {
 }
 
 
-void distance_levenshtein(const string &s1, const string &s2) {
+void distance_levenshtein(const string &s1, const string &s2, bool affichage = true) {
     const std::size_t len1 = s1.size(), len2 = s2.size();
     vector<vector<int> > d(len1 + 1, vector<int>(len2 + 1));
 
@@ -106,8 +105,10 @@ void distance_levenshtein(const string &s1, const string &s2) {
     }
 
     cout << "Distance de Levenshtein : " << d[len1][len2] << endl;
-    affiche_matrice(d);
-    affiche_modifications(d, s1, s2);
+    if (affichage) {
+        affiche_matrice(d);
+        affiche_modifications(d, s1, s2);
+    }
 
 }
 
@@ -123,7 +124,6 @@ void distance_levenshtein_damerau(const string &s1, const string &s2) {
     //On remplit la matrice d
     for (int i = 1; i <= len1; ++i) {
         for (int j = 1; j <= len2; ++j) {
-            //pas le meme cout
             d[i][j] = min(min(d[i - 1][j] + 1, d[i][j - 1] + 1), d[i - 1][j - 1] + (s1[i - 1] == s2[j - 1] ? 0 : 1));
             //seule différence avec levenshtein
             if (i > 1 && j > 1 && s1[i - 1] == s2[j - 2] && s1[i - 2] == s2[j - 1]) {
@@ -174,20 +174,71 @@ void distance_levenshtein_lineaire(const string &s1, const string &s2) {
 }
 
 
+int distance_levenshtein_rec_aux(const string &s1, const string &s2, int i, int j) {
+    if (i == 0 || j == 0) return max(i, j);
+
+    return min(
+            min(distance_levenshtein_rec_aux(s1, s2, i - 1, j) + 1, distance_levenshtein_rec_aux(s1, s2, i, j - 1) + 1),
+            distance_levenshtein_rec_aux(s1, s2, i - 1, j - 1) + (s1[i - 1] == s2[j - 1] ? 0 : 1));
+}
+
+
+void distance_levenshtein_rec(const string &s1, const string &s2) {
+    cout << "Distance de Levenshtein (version recursive) : "
+         << distance_levenshtein_rec_aux(s1, s2, s1.size(), s2.size()) << endl;
+}
+
+
+int distance_levenshtein_rec_memo_aux(const string &s1, const string &s2, int i, int j, vector<vector<int> > &memo) {
+    if (memo[i][j] == -1) {
+        memo[i][j] = (i == 0 || j == 0) ? max(i, j) : min(
+                min(distance_levenshtein_rec_memo_aux(s1, s2, i - 1, j, memo) + 1,
+                    distance_levenshtein_rec_memo_aux(s1, s2, i, j - 1, memo) + 1),
+                distance_levenshtein_rec_memo_aux(s1, s2, i - 1, j - 1, memo) + (s1[i - 1] == s2[j - 1] ? 0 : 1));
+    }
+    return memo[i][j];
+}
+
+void distance_levenshtein_rec_memo(const string &s1, const string &s2) {
+    vector<vector<int> > memo(s1.size() + 1, vector<int>(s2.size() + 1, -1));
+    cout << "Distance de Levenshtein (version recursive memoisee) : "
+         << distance_levenshtein_rec_memo_aux(s1, s2, s1.size(), s2.size(), memo) << endl;
+    //On peut afficher la matrice de distance entre prefixes memoisee pour la comparer a la version iterative (ce sont les memes)
+    //affiche_matrice(memo);
+}
+
+
 int main() {
     string s1 = "ecoles";
     string s2 = "eclose";
 
-    // s1 = "pr";
-    // s2 = "rp";
+    //s1 = "testpluslong";
+    //s2 = "longmottest";
 
     cout << "Les deux mots sont : " << s1 << " et " << s2 << endl;
 
-    distance_levenshtein(s1, s2);
+    clock_t t1, t2;
+
+    t1 = clock();
+    //Pour correctement comparer les temps d'execution avec la version recursive memoisee, mettre affichage=false.
+    // Utiliser des mots plus longs (et commenter la version recursive naive qui prendra trop de temps)
+    distance_levenshtein(s1, s2, true);
+    t2 = clock();
+    cout << "Execution en " << (t2 - t1) / double(CLOCKS_PER_SEC) << " secondes" << endl;
 
     distance_levenshtein_damerau(s1, s2);
 
     distance_levenshtein_lineaire(s1, s2);
+
+    t1 = clock();
+    distance_levenshtein_rec(s1, s2);
+    t2 = clock();
+    cout << "Execution en " << (t2 - t1) / double(CLOCKS_PER_SEC) << " secondes" << endl;
+
+    t1 = clock();
+    distance_levenshtein_rec_memo(s1, s2);
+    t2 = clock();
+    cout << "Execution en " << (t2 - t1) / double(CLOCKS_PER_SEC) << " secondes" << endl;
 
     return 0;
 }
