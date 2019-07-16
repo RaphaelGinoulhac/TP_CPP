@@ -107,11 +107,11 @@ void q4(const set<Town> &intersect) {
     int counter = 0;
     //Selon l'enonce, les villes v1, v2, v3, v4 sont toutes dans N intersect C.
     //On cree d'abord deux maps, une des villes qui ont le meme nom, l'autre des villes qui ont les memes coordonnees
-    map<string, vector<Town>> towns_same_name;
-    map<Point2D, vector<Town>> towns_same_coord;
+    map<string, set<Town>> towns_same_name;
+    map<Point2D, set<Town>> towns_same_coord;
     for (auto it = intersect.begin(); it != intersect.end(); it++) {
-        towns_same_name[it->name()].push_back(*it);
-        towns_same_coord[it->point()].push_back(*it);
+        towns_same_name[it->name()].insert(*it);
+        towns_same_coord[it->point()].insert(*it);
     }
 
     // Premiere boucle sur toutes les villes de N inter C
@@ -129,13 +129,13 @@ void q4(const set<Town> &intersect) {
                     if (*it1 != *it3) {        //On enleve le cas v1=v3
 
                         // On cherche v4 de memes coordonnees que v3 et de meme nom que v2
-                        vector<Town> same_name_v2 = towns_same_name[it2->name()];
-                        vector<Town> same_coord_v3 = towns_same_coord[it3->point()];
-                        vector<Town> test_v4(min(same_name_v2.size(), same_coord_v3.size()));
+                        set<Town> same_name_v2 = towns_same_name[it2->name()];
+                        set<Town> same_coord_v3 = towns_same_coord[it3->point()];
+                        set<Town> test_v4;
                         auto it4 = set_intersection(same_name_v2.begin(), same_name_v2.end(),
                                                     same_coord_v3.begin(), same_coord_v3.end(),
-                                                    test_v4.begin());
-                        test_v4.resize(it4 - test_v4.begin());
+                                                    inserter(test_v4, test_v4.begin()));
+
                         if (!test_v4.empty()) {
                             counter += test_v4.size();
                         }
@@ -150,7 +150,7 @@ void q4(const set<Town> &intersect) {
     cout << "The number of towns where we can be mistaken by hearing about a town A close to a town B is : " << counter
          << endl;
     //On fait au maximum 207*4*9 = 7452 iterations
-    //La methode naive implementee au dessus fait 4 parmi 103 = environ 78 Millions d'iterations
+    //La methode naive implementee au dessus fait 4 parmi 210 (4 boucles et 207 elements dans l'ensemble) = environ 78 Millions d'iterations
     //Le gain de temps est d'un facteur 10.000
 }
 

@@ -30,7 +30,7 @@ public:
     };
 
     bool operator==(const Point2D &b) const {
-        return _x == b._x && _y < b._y;
+        return _x == b._x && _y == b._y;
     };
 
 

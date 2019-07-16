@@ -71,25 +71,25 @@ public:
 
     // Read file of town names and coordinates, and add them into a vector
     // Return number of towns read, or negative value if some error occurred
-    static int read_file(string townFile, vector <Town> &towns);
+    static int read_file(string townFile, vector<Town> &towns);
 
     // Read file of town names and coordinates, and add them into a vector
     // also keeping track of the coordinates bounding box
     // Return number of towns read, or negative value if some error occurred
-    static int read_file(string townFile, vector <Town> &towns,
+    static int read_file(string townFile, vector<Town> &towns,
                          float &xmin, float &ymin, float &xmax, float &ymax);
 
     // Return a vector of towns that have a given name
-    static vector <Town>
-    towns_with_name(const vector <Town> towns, string name);
+    static vector<Town>
+    towns_with_name(const vector<Town> towns, string name);
 
     // Return a vector of towns with given Lambert 93 (x,y) coordinates
-    vector <Town>
-    towns_with_x_y(const vector <Town> towns, float x, float y);
+    vector<Town>
+    towns_with_x_y(const vector<Town> towns, float x, float y);
 
     // Return a vector of towns with given geographic coordinates
-    static vector <Town>
-    towns_with_lat_lon(const vector <Town> towns, float lat, float lon);
+    static vector<Town>
+    towns_with_lat_lon(const vector<Town> towns, float lat, float lon);
 
     //Operator< to get a total order
     bool operator<(const Town &b) const {
@@ -97,11 +97,11 @@ public:
     };
 
     bool operator==(const Town &b) const {
-        return _name == b._name && point() == b.point();
+        return (_name == b._name) && (point() == b.point());
     };
 
     bool operator!=(const Town &b) const {
-        return !(*this==b);
+        return !(*this == b);
     };
 };
 
