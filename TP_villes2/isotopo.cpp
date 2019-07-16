@@ -60,28 +60,24 @@ q3(const vector<Town> &towns, const map<string, int> &town_names, const map<Poin
     set<Town> N, C, intersect;
     cout << "Creating the set N of towns whose name is repeated at least once, and C of towns whose coordinates are "
             "repeated at least once" << endl;
-    //On calcule a la volee la taille de N et C car calculer la taille du set est une operation qui coute O(n)
-    int size_of_N = 0, size_of_C = 0;
 
     for (int i = 0; i < towns.size(); i++) {
         if (town_names.at(towns[i].name()) > 1) {
             N.insert(towns[i]);
-            size_of_N++;
         }
         if (town_coordinates.at(towns[i].point()) > 1) {
             C.insert(towns[i]);
-            size_of_C++;
         }
     }
 
-    cout << "Size of N : " << size_of_N << endl;
-    cout << "Size of C : " << size_of_C << endl;
+    cout << "Size of N : " << N.size() << endl;
+    cout << "Size of C : " << C.size() << endl;
 
     auto end = set_intersection(N.begin(), N.end(), C.begin(), C.end(), inserter(intersect, intersect.begin()));
 
-    auto size_of_intersect = distance(intersect.begin(), intersect.end());
+    //auto size_of_intersect = distance(intersect.begin(), intersect.end());
 
-    cout << "The intersection of N and C has " << size_of_intersect << " elements" << endl;
+    cout << "The intersection of N and C has " << intersect.size() << " elements" << endl;
     return intersect;
 }
 
