@@ -55,7 +55,8 @@ map<Point2D, int> histogram_of_coordinate_repetitions(const vector<Town> &towns)
 }
 
 
-set<Town> q3(const vector<Town> &towns, const map<string, int> &town_names, const map<Point2D, int> &town_coordinates) {
+set<Town>
+q3(const vector<Town> &towns, const map<string, int> &town_names, const map<Point2D, int> &town_coordinates) {
     set<Town> N, C, intersect;
     cout << "Creating the set N of towns whose name is repeated at least once, and C of towns whose coordinates are "
             "repeated at least once" << endl;
@@ -85,7 +86,7 @@ set<Town> q3(const vector<Town> &towns, const map<string, int> &town_names, cons
 }
 
 
-void q4(const set<Town> &intersect) {
+void q4_naive(const set<Town> &intersect) {
     int counter = 0;
     //Selon l'enonce, les villes v1, v2, v3, v4 sont toutes dans N intersect C.
     //On fait alors une recherche exhaustive dans l'ensemble intersect, et on gagne du temps en initialisant les iterateurs
@@ -103,6 +104,58 @@ void q4(const set<Town> &intersect) {
     }
     cout << "The number of towns where we can be mistaken by hearing about a town A close to a town B is : " << counter
          << endl;
+}
+
+
+void q4(const set<Town> &intersect) {
+    int counter = 0;
+    //Selon l'enonce, les villes v1, v2, v3, v4 sont toutes dans N intersect C.
+    //On cree d'abord deux maps, une des villes qui ont le meme nom, l'autre des villes qui ont les memes coordonnees
+    map<string, vector<Town>> towns_same_name;
+    map<Point2D, vector<Town>> towns_same_coord;
+    for (auto it = intersect.begin(); it != intersect.end(); it++) {
+        towns_same_name[it->name()].push_back(*it);
+        towns_same_coord[it->point()].push_back(*it);
+    }
+
+    // Premiere boucle sur toutes les villes de N inter C
+    for (auto it1 = intersect.begin(); it1 != intersect.end(); it1++) {
+        Point2D coordinates_v1 = it1->point();
+        string name_v1 = it1->name();
+
+        // Boucle sur les villes v2 de memes coordonnees que v1 (4 possibilites max)
+        for (auto it2 = towns_same_coord[coordinates_v1].begin();
+             it2 != towns_same_coord[coordinates_v1].end(); it2++) {
+            if (*it1 != *it2) {    //On enleve le cas v1=v2
+
+                // Boucle sur les villes v3 de meme nom que v1 (9 possibilites max)
+                for (auto it3 = towns_same_name[name_v1].begin(); it3 != towns_same_name[name_v1].end(); it3++) {
+                    if (*it1 != *it3) {        //On enleve le cas v1=v3
+
+                        // On cherche v4 de memes coordonnees que v3 et de meme nom que v2
+                        vector<Town> same_name_v2 = towns_same_name[it2->name()];
+                        vector<Town> same_coord_v3 = towns_same_coord[it3->point()];
+                        vector<Town> test_v4(min(same_name_v2.size(), same_coord_v3.size()));
+                        auto it4 = set_intersection(same_name_v2.begin(), same_name_v2.end(),
+                                                    same_coord_v3.begin(), same_coord_v3.end(),
+                                                    test_v4.begin());
+                        test_v4.resize(it4 - test_v4.begin());
+                        if (!test_v4.empty()) {
+                            counter += test_v4.size();
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    counter /= 4; //On compte chaque quadruplet 4 fois
+
+    cout << "The number of towns where we can be mistaken by hearing about a town A close to a town B is : " << counter
+         << endl;
+    //On fait au maximum 207*4*9 = 7452 iterations
+    //La methode naive implementee au dessus fait 4 parmi 103 = environ 78 Millions d'iterations
+    //Le gain de temps est d'un facteur 10.000
 }
 
 
@@ -151,6 +204,7 @@ int main() {
 
     //Q4
     q4(intersect);
+    //q4_naive(intersect);
 
     // That's all folks
     return 0;
