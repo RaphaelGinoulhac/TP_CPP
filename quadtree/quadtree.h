@@ -34,8 +34,10 @@ const int SW = 3; // South-West
 const int nQuadDir = 4;
 
 // Forward declarations (so that the class names can be used in QuadTree)
-template <typename T> class QuadLeaf; // The type of a QuadTree leaf
-template <typename T> class QuadNode; // The type of a QuadTree node
+template<typename T>
+class QuadLeaf; // The type of a QuadTree leaf
+template<typename T>
+class QuadNode; // The type of a QuadTree node
 
 /*--------------------------------------------------------------------------*
  * Abstract class for quadtrees, whose leaves contain a value of type T
@@ -44,7 +46,7 @@ template <typename T> class QuadNode; // The type of a QuadTree node
  * classes can be instantiated.  However, generic methods can be defined
  * at the level of this superclass.
  *--------------------------------------------------------------------------*/
-template <typename T>
+template<typename T>
 class QuadTree {
 public:
     // Constructors are defined in each subclass
@@ -57,7 +59,7 @@ public:
     virtual bool isLeaf() const = 0; // This makes QuadTree an abstract class
 
     // Tell if this quadtree is a node
-    inline virtual bool isNode() const { return !isLeaf();}
+    inline virtual bool isNode() const { return !isLeaf(); }
 
     // Return the number of leaves in this qtree
     virtual int nLeaves() const = 0;
@@ -80,32 +82,31 @@ public:
 
     // Return a reference to the value of this QuadLeaf (for assignments)
     // Throw domain_error if not a QuadLeaf
-    virtual T& value() = 0;
+    virtual T &value() = 0;
 
     ///// QuadNode methods
 
     // Return the son of this quadtree in direction d
     // Throw domain_error if not a QuadNode
-    virtual QuadTree<T>* const& son(int d) const = 0;
+    virtual QuadTree<T> *const &son(int d) const = 0;
 
     // Return a reference to the son of this quadtree in direction d
     // Throw domain_error if not a QuadNode
-    virtual QuadTree<T>*& son(int d) = 0;
+    virtual QuadTree<T> *&son(int d) = 0;
 
 };
 
 // Flag to indicate whether leaves should be excluded from deletion
 // when a (recursive) destruction is invoke on a tree -- defaults to false
-template <typename T>
+template<typename T>
 bool QuadTree<T>::protect_leaves_from_destruction = false;
 
 
 /*--------------------------------------------------------------------------*
  * A leaf of a quadtree, containing a value of type T
  *--------------------------------------------------------------------------*/
-template <typename T>
-class QuadLeaf : public QuadTree<T>
-{
+template<typename T>
+class QuadLeaf : public QuadTree<T> {
     // The value contained in this leaf
     T val;
 
@@ -131,105 +132,98 @@ public:
     inline const T value() const { return val; }
 
     // Return a reference to the value of this QuadLeaf (for assignments)
-    inline T& value() { return val; }
+    inline T &value() { return val; }
 
     ///// QuadNode methods
 
     // Supposed to return the son of this quadtree in direction d
     // But throw domain_error as not a QuadNode
-    inline QuadTree<T>* const& son(int d) const {
-	throw new std::domain_error("Not a QuadNode"); }
+    inline QuadTree<T> *const &son(int d) const {
+        throw new std::domain_error("Not a QuadNode");
+    }
 
     // Supposed to return a reference to the son of this quadtree in direction d
     // But throw domain_error as not a QuadNode
-    inline QuadTree<T>*& son(int d) {
-	throw new std::domain_error("Not a QuadNode"); }
+    inline QuadTree<T> *&son(int d) {
+        throw new std::domain_error("Not a QuadNode");
+    }
 
 };
-
 
 
 /*--------------------------------------------------------------------------*
  * A branching node of a quadtree, whose leaves contain a value of type T
  *--------------------------------------------------------------------------*/
-template <typename T>
-class QuadNode : public QuadTree<T>
-{
+template<typename T>
+class QuadNode : public QuadTree<T> {
     // The sons of this node for the 4 quadrant directions
-    QuadTree<T>* sons[nQuadDir];
+    QuadTree<T> *sons[nQuadDir];
 
 public:
     // Tell if this quadtree is a leaf
     inline bool isLeaf() const { return false; }
 
     // Construct a new branching node given an array of 4 quadtrees 
-    QuadNode(QuadTree<T>* qtrees[])
-    {
-	// Assign sons
+    QuadNode(QuadTree<T> *qtrees[]) {
+        // Assign sons
         for (int i = 0; i < nQuadDir; i++)
-	    sons[i] = qtrees[i];
+            sons[i] = qtrees[i];
     }
 
     // Construct a new branching node with empty (null) sons
-    QuadNode()
-    {
-	// Assign sons
+    QuadNode() {
+        // Assign sons
         for (int i = 0; i < nQuadDir; i++)
-	    sons[i] = nullptr;
+            sons[i] = nullptr;
     }
 
     // Construct a new branching node given 4 sons
-    QuadNode(QuadTree<T>* son0,
-	     QuadTree<T>* son1,
-	     QuadTree<T>* son2,
-	     QuadTree<T>* son3)
-    {
-	// Assign sons
-	sons[0] = son0;
-	sons[1] = son1;
-	sons[2] = son2;
-	sons[3] = son3;
+    QuadNode(QuadTree<T> *son0,
+             QuadTree<T> *son1,
+             QuadTree<T> *son2,
+             QuadTree<T> *son3) {
+        // Assign sons
+        sons[0] = son0;
+        sons[1] = son1;
+        sons[2] = son2;
+        sons[3] = son3;
     }
 
     // Destruct this QuadNode and, recursively, subtrees
     // Note: deletion of quad-dag (quadtree with node sharing) is not supported
-    ~QuadNode()
-    {
-	// For each direction
+    ~QuadNode() {
+        // For each direction
         for (int i = 0; i < nQuadDir; i++)
-	    // Delete the corresponding son
-	    if (sons[i] && !(sons[i]->isLeaf() && QuadTree<T>::protect_leaves_from_destruction))
-		delete sons[i];
+            // Delete the corresponding son
+            if (sons[i] && !(sons[i]->isLeaf() && QuadTree<T>::protect_leaves_from_destruction))
+                delete sons[i];
     }
 
     // Return the number of leaves in this qtree
-    inline int nLeaves() const
-    {
-      int n = 0;
-      for (int i = 0; i < nQuadDir; i++)
-	if (sons[i] != nullptr)
-	  n += sons[i]->nLeaves();
-      return n;
+    inline int nLeaves() const {
+        int n = 0;
+        for (int i = 0; i < nQuadDir; i++)
+            if (sons[i] != nullptr)
+                n += sons[i]->nLeaves();
+        return n;
     }
 
     // Return the number of nodes in this qtree (excluding leaves)
-    inline int nNodes() const
-    {
-      int n = 1;
-      for (int i = 0; i < nQuadDir; i++)
-	if (sons[i] != nullptr)
-	  n += sons[i]->nNodes();
-      return n;
+    inline int nNodes() const {
+        int n = 1;
+        for (int i = 0; i < nQuadDir; i++)
+            if (sons[i] != nullptr)
+                n += sons[i]->nNodes();
+        return n;
     }
 
     // Return the number of (sub)trees in this qtree (nodes and leaves)
-    inline int nTrees() const
-    {
-      int n = 1;
-      for (int i = 0; i < nQuadDir; i++)
-	if (sons[i] != nullptr)
-	  n += sons[i]->nTrees();
-      return n;
+    inline int nTrees() const {
+        int n = 1;
+        for (int i = 0; i < nQuadDir; i++)
+            if (sons[i] != nullptr)
+                n += sons[i]->nTrees();
+        return n;
     }
 
     ///// QuadLeaf methods
@@ -240,32 +234,32 @@ public:
 
     // Supposed to return a reference to the value of this QuadTree
     // But throw a domain_error as it is not a QuadLeaf
-    inline T& value() { throw new std::domain_error("Not a QuadLeaf"); }
+    inline T &value() { throw new std::domain_error("Not a QuadLeaf"); }
 
     ///// QuadNode methods
 
     // Return the son of this quadtree in direction d 
-    inline QuadTree<T>* const& son(int d) const
-    {
-	// Make sure the direction makes sense
-	if(!(0 <= d && d < nQuadDir)) {
-	    std::ostringstream oss; oss << d;
-	    throw new std::out_of_range("Not a valid direction: "+oss.str());
-	}
-	// Yield son
-	return sons[d];
+    inline QuadTree<T> *const &son(int d) const {
+        // Make sure the direction makes sense
+        if (!(0 <= d && d < nQuadDir)) {
+            std::ostringstream oss;
+            oss << d;
+            throw new std::out_of_range("Not a valid direction: " + oss.str());
+        }
+        // Yield son
+        return sons[d];
     }
 
     // Return a reference to the son of this quadtree in direction d
-    inline QuadTree<T>*& son(int d)
-    {
-	// Make sure the direction makes sense */
-	if (!(0 <= d && d < nQuadDir)) {
-	    std::ostringstream oss; oss << d;
-	    throw new std::out_of_range("Not a valid direction: "+oss.str());
-	}
-	// Return son reference
-	return sons[d];
+    inline QuadTree<T> *&son(int d) {
+        // Make sure the direction makes sense */
+        if (!(0 <= d && d < nQuadDir)) {
+            std::ostringstream oss;
+            oss << d;
+            throw new std::out_of_range("Not a valid direction: " + oss.str());
+        }
+        // Return son reference
+        return sons[d];
     }
 };
 
@@ -275,34 +269,32 @@ public:
 /*
  * Display a quadtree on standard output
  */
-template <typename T>
-void display(QuadTree<T>* qt, std::string prefix = "", void(*prt)(T) = nullptr)
-{
+template<typename T>
+void display(QuadTree<T> *qt, std::string prefix = "", void(*prt)(T) = nullptr) {
     // If tree is not null
-    if (qt != nullptr)
-    {
-	// If tree is leaf
-	if (qt->isLeaf()) {
-	    // Output its value
-	    std::cout << prefix << " = ";
-	    if (prt)
-		(*prt)(qt->value());
-	    else
-		std::cout << qt->value();
-	    std::cout << std::endl;
-	}
-	// Otherwise if tree is a branch node
-	else
-	    // For each direction
-	    for (int d = 0; d < nQuadDir; d++) {
-		// Get direction name
-		std::string dirName[] = {"NW", "NE", "SE", "SW"};
-		// Dump son in this direction
-		display(qt->son(d),prefix+"-"+dirName[d]);
-	    }
+    if (qt != nullptr) {
+        // If tree is leaf
+        if (qt->isLeaf()) {
+            // Output its value
+            std::cout << prefix << " = ";
+            if (prt)
+                (*prt)(qt->value());
+            else
+                std::cout << qt->value();
+            std::cout << std::endl;
+        }
+            // Otherwise if tree is a branch node
+        else
+            // For each direction
+            for (int d = 0; d < nQuadDir; d++) {
+                // Get direction name
+                std::string dirName[] = {"NW", "NE", "SE", "SW"};
+                // Dump son in this direction
+                display(qt->son(d), prefix + "-" + dirName[d]);
+            }
     }
-    // Otherwise, if tree is null pointer
+        // Otherwise, if tree is null pointer
     else
-	// Output empty tree
-	std::cout << prefix << " ." << std::endl;
+        // Output empty tree
+        std::cout << prefix << " ." << std::endl;
 }

@@ -17,13 +17,24 @@ public:
     float x, y;
     // Size of the square side
     float w;
+
     // Construct default square
     Square() {};
+
     // Construct a square from bottom-left coordinates (x,y) and a side size w
     Square(float _x, float _y, float _w) : x(_x), y(_y), w(_w) {};
+
+    //Copy constructor
+    Square(const Square &s) {
+        x = s.x;
+        y = s.y;
+        w = s.w;
+    };
+
     // Construct a new square which is a sub-square of this square, in
     // quadrant direction dir where dir is as defined in quadtree.h
     Square subsquare(int dir);
+
     // Return true iff this square intersects with disk at p with radius r
     bool intersects_disk(Point_2D p, float r);
 };
