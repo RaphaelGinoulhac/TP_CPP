@@ -17,6 +17,7 @@ string townFile = srcPath "/villes.txt";
 #include "neighbors.h"
 
 
+//Toutes les "validations" des questions 2-4 sont regroupees dans cette fonction
 void testing() {
 
 
@@ -60,6 +61,39 @@ void testing() {
     }
 
     delete ql;
+}
+
+
+//Question 8
+pair<float, float>
+nearest_neighbor_time(const vector<Town> &towns, QuadTree<Point2D<Town> > *q_tree, Square s, int num_trials = 100) {
+    float time1 = 0, time2 = 0;
+    vector<Point2D<Town> > neighbors;
+
+    for (int j = 0; j < num_trials; j++) {
+        //Recherche du plus proche voisin dans le QuadTree
+        Town town = towns[rand() % towns.size()];
+
+        clock_t t1 = clock();
+        search(neighbors, q_tree, s, Point2D<Town>(town.x(), town.y(), town));
+        clock_t t2 = clock();
+        time1 += ((float) (t2 - t1) / CLOCKS_PER_SEC);
+        neighbors.clear();
+
+        //Recherche du plus proche voisin dans un vecteur
+        float min_distance = INFINITY, current_distance;
+        t1 = clock();
+        for (int i = 0; i < towns.size(); i++) {
+            if (towns[i] != town) {
+                current_distance = distance(towns[i].x(), towns[i].y(), town.x(), town.y());
+                if (current_distance < min_distance) min_distance = current_distance;
+            }
+        }
+        t2 = clock();
+        time2 += ((float) (t2 - t1) / CLOCKS_PER_SEC);
+    }
+    return make_pair(time1 / num_trials, time2 / num_trials);
+
 }
 
 /*
@@ -123,7 +157,7 @@ int main() {
     // Draw two random towns
     Town town1 = towns[rand() % towns.size()];
     Town town2 = towns[rand() % towns.size()];
-    Town town3 = towns[rand() % towns.size()];
+
     // Compute distance
     cout << "By the way, did you know that " << town1.name()
          << " was " << town1.dist(town2)
@@ -140,10 +174,14 @@ int main() {
     q_tree = new QuadNode<Point2D<Town> >(0, 0, 0, 0);
     //Plus petit carre contenant la France
     Square S_france = Square(xmin, ymin, max(xmax - xmin, ymax - ymin));
+    t1 = clock();
     //Insertion de toutes les villes
     for (int i = 0; i < towns.size(); i++) {
         insert(q_tree, S_france, Point2D<Town>(towns[i].x(), towns[i].y(), towns[i]));
     }
+    t2 = clock();
+    float time_construct_quad = ((float) (t2 - t1) / CLOCKS_PER_SEC);
+    cout << "QuadTree constructed in " << time_construct_quad << " s" << endl;
 
     //Taille du QuadTree
     cout << "Number of leaves : " << q_tree->nLeaves() << endl;
@@ -157,11 +195,22 @@ int main() {
     pair<float, float> x_y_ponts = geoToLambert93(lat_ponts, lon_ponts);
 
     int nodes_visited = search(neighbors, q_tree, S_france,
-                               Point2D<Town>(x_y_ponts.first, x_y_ponts.second, Town("", lat_ponts, lon_ponts)));
+                               Point2D<Town>(x_y_ponts.first, x_y_ponts.second, Town("Ponts", lat_ponts, lon_ponts)));
 
-    cout << "Closest town to Ponts : " << neighbors[0].info().name() << endl;
+    cout << "Closest town to Ponts : " << neighbors[0].info().name() << ", distance : "
+         << distance(x_y_ponts.first, x_y_ponts.second, neighbors[0].info().x(), neighbors[0].info().y()) << endl;
     cout << nodes_visited << " nodes visited during this nearest neighbor search" << endl;
 
+
+    //Pour un parcours lineaire du vecteur de villes, il faut visiter chaque ville une fois,
+    // donc on a 35.181 visites (car il n'y a pas d'ordre particulier dans le vecteur)
+
+    pair<float, float> times = nearest_neighbor_time(towns, q_tree, S_france);
+    cout << "Mean time of the nearest neighbor search using a QuadTree : " << times.first << " s" << endl;
+    cout << "Mean time of the nearest neighbor search using a vector : " << times.second << " s" << endl;
+
+    cout << "Mean number of nearest neighbor searches to make so that the construction of the QuadTree is profitable : "
+         << time_construct_quad / (times.second - times.first) << endl;
 
     delete q_tree;
 

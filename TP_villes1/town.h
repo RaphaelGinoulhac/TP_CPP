@@ -78,6 +78,14 @@ public:
     // Return a vector of towns with given geographic coordinates
     static vector<Town>
     towns_with_lat_lon(const vector<Town> towns, float lat, float lon);
+
+    bool operator==(const Town &b) const {
+        return (_name == b._name) && (x() == b.x() && (y() == b.y()));
+    };
+
+    bool operator!=(const Town &b) const {
+        return !(*this == b);
+    };
 };
 
 
