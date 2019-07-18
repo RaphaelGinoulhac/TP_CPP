@@ -21,9 +21,9 @@ void insert(QuadTree<Point2D<T> > *&qtree, Square s, Point2D<T> p) {
     int next_dir = Q.dir;
 
     //On atteint une feuille
-    if (qtree->son(next_dir)->isLeaf()) {
+    if (qtree->son(next_dir) == nullptr || qtree->son(next_dir)->isLeaf()) {
         //Si la case est vide
-        if (qtree->son(next_dir) == nullptr) qtree->son(next_dir)->son(next_dir) = new QuadLeaf<Point2D<T> >(p);
+        if (qtree->son(next_dir) == nullptr) qtree->son(next_dir) = new QuadLeaf<Point2D<T> >(p);
             // Si la case est deja occupee par un point different (si c'est le meme point, on n'effectue pas d'insertion)
         else if (qtree->son(next_dir)->value() != p) {
             Point2D<T> previous_leaf_value = qtree->son(next_dir)->value();
@@ -48,7 +48,26 @@ void insert(QuadTree<Point2D<T> > *&qtree, Square s, Point2D<T> p) {
 template<typename T>
 int search(vector<Point2D<T> > &neighbors,
            QuadTree<Point2D<T> > *qtree, Square s,
-           Point2D<T> p, float &r, bool nearest = false);
+           Point2D<T> p, float &r, bool nearest = false) {
+    int visited = 0;
+    for (int d = 0; d < nQuadDir; d++) {
+        QuadTree<Point2D<T> > *f = qtree->son(d);
+        if (f && f->isLeaf()) {
+            visited++;
+            if (f->value().dist2(p) <= pow(r, 2)) {
+                if (nearest) {
+                    r = f->value().dist(p);
+                    if (!neighbors.empty()) neighbors.pop_back();
+                }
+                neighbors.push_back(f->value());
+            }
+        } else if (f && s.subsquare(d).intersects_disk(p, r)) {
+            visited++;
+            visited += search(neighbors, f, s.subsquare(d), p, r, nearest);
+        }
+    }
+    return visited;
+}
 
 //
 // Add in vector neighbors the nearest point of p in the quadtree qtree
@@ -59,5 +78,10 @@ int search(vector<Point2D<T> > &neighbors,
 template<typename T>
 int search(vector<Point2D<T> > &neighbors,
            QuadTree<Point2D<T> > *qtree, Square s,
-           Point2D<T> p);
+           Point2D<T> p) {
+    float r = INFINITY;
+
+    return search(neighbors, qtree, s, p, r, true);
+
+}
 
