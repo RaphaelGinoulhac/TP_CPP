@@ -21,12 +21,9 @@ int main() {
     srand(time(0));
     int compteur = 0;
     int compteur2 = 0;
+    //Entre 5 et 14 élèves
     int num_eleves = rand() % 10 + 5;
     vector<Eleve> v;
-    //v.push_back(Eleve("Raphael", 20));
-    //v.push_back(Eleve("Theo", 16));
-    // v.push_back(Eleve("Guillaume", 18));
-    // v.push_back(Eleve("Louis", 12));
 
     for (int i = 0; i < num_eleves; i++) {
         v.push_back(Eleve());
