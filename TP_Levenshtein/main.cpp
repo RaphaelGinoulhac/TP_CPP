@@ -215,6 +215,9 @@ int main() {
     //s1 = "testpluslong";
     //s2 = "longmottest";
 
+    //s1 = "testvraimentpluslongcomplexe";
+    //s2 = "treslongmottestcomplexite";
+
     cout << "Les deux mots sont : " << s1 << " et " << s2 << endl;
 
     clock_t t1, t2;

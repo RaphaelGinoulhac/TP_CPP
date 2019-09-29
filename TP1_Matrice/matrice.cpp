@@ -19,7 +19,7 @@ Matrice::Matrice(const Matrice &A) {
     cout << "Construction par copie" << endl;
 }
 
-void Matrice::operator=(const Matrice &A) {
+Matrice& Matrice::operator=(const Matrice &A) {
     delete[] tab;
     m = A.m;
     n = A.n;
@@ -27,6 +27,7 @@ void Matrice::operator=(const Matrice &A) {
     for (int i = 0; i < m * n; i++) {
         tab[i] = A.tab[i];
     }
+    return *this;
 }
 
 Matrice::~Matrice() {

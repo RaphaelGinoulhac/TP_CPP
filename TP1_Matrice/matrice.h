@@ -24,8 +24,10 @@ public:
     //destructeur
     ~Matrice();
 
-    void operator=(const Matrice &A);
+    //affectation
+    Matrice& operator=(const Matrice &A);
 
+    //multiplication
     Matrice operator*(const Matrice &B);
 
     //set
