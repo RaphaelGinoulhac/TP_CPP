@@ -115,17 +115,9 @@ int Tree<T>::nbSons() {
 template<typename T>
 
 Tree<T> *Tree<T>::getSon(int pos) {
-    try {
-        Tree *fils = sons.at(pos);
-        return fils;
-    }
-        //Si on a indique une mauvaise position ou bien si le noeud n'a aucun fils, on retourne le noeud lui-meme
-    catch (exception const &e) {
-        cerr << "Erreur : " << e.what()
-             << ", le fils demande n'existe pas,  un arbre avec le meme noeud que le pere est retourne " << endl;
-        //On ne peut pas renvoyer un Tree(0) comme avec IntTree, on renvoit donc un Tree contenant data
-        return new Tree(data);
-    }
+    Tree *fils = sons.at(pos);
+    return fils;
+
 }
 
 

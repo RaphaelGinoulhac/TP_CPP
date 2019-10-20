@@ -24,15 +24,8 @@ int IntTree::nbSons() {
 
 //Cas d'erreur : pos n'est pas entre 0 et nbSons-1, on veut alors acceder a un element qui n'est pas dans le vecteur
 IntTree *IntTree::getSon(int pos) {
-    try {
-        IntTree *fils = sons.at(pos);
-        return fils;
-    }
-    //Si on a indique une mauvaise position ou bien si le noeud n'a aucun fils, on retourne le noeud lui-meme
-    catch (exception const &e) {
-        cerr << "Erreur : " << e.what() << ", le fils demande n'existe pas, un arbre avec le noeud 0 est retourne " <<endl;
-        return new IntTree(0);
-    }
+    IntTree *fils = sons.at(pos);
+    return fils;
 
 }
 

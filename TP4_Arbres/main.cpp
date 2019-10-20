@@ -50,14 +50,19 @@ int main() {
     bool testGestionErreur = true;
     if (testGestionErreur) {
 
-        cout << "Pause dans le programme avant l'affichage de la gestion d'erreur, veuillez entrer un message (quelconque) "
-             << endl;
+        cout << "Pause dans le programme avant l'affichage de la gestion d'erreur, veuillez entrer "
+                "un message (quelconque) " << endl;
         cin.ignore();
 
         //Test gestion d'erreur pour IntTree
-        IntTree *fils = root->getSon(-1);
-        fils->display();
-        delete fils;
+        try {
+            IntTree *fils = root->getSon(-1);
+            delete fils;
+        }
+            //Si on a indique une mauvaise position ou bien si le noeud n'a aucun fils
+        catch (exception const &e) {
+            cerr << "Erreur : " << e.what() << ", le fils demande n'existe pas " << endl;
+        }
 
 
         try {
@@ -91,15 +96,17 @@ int main() {
             cerr << "Erreur : " << e.what() << endl;
         }
 
-        Tree<float> *filss = tree->getSon(-1);
-        filss->display();
-        delete filss;
+        try {
+            Tree<float> *filss = tree->getSon(-1);
+            delete filss;
+        }
+        catch (exception const &e) {
+            cerr << "Erreur : " << e.what() << ", le fils demande n'existe pas" << endl;
+        }
+
+        delete root;
+        delete tree;
+
+        return 0;
     }
-
-
-    delete root;
-    delete tree;
-
-
-    return 0;
 }
