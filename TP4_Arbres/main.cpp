@@ -16,6 +16,7 @@ int main() {
     root->getSon(1)->addAsLastSon(new IntTree(17));
     root->getSon(1)->getSon(0)->addAsLastSon(new IntTree(15));
 
+    cout << "Premier arbre, IntTree : " << endl;
     root->display("* ");
     cout << endl;
 
@@ -29,6 +30,7 @@ int main() {
     tree->getSon(1)->getSon(0)->addAsLastSon(new Tree<float>(3));
     tree->getSon(1)->getSon(0)->getSon(0)->addAsLastSon(new Tree<float>(3.1));
 
+    cout << "Deuxieme arbre, Tree<float>, qui sera utilise pour les parcours et les calculs de profondeur : " << endl;
     tree->display("* ", "  ");
 
     cout << "Parcours en profondeur d'abord en sortant" << endl;
@@ -43,12 +45,17 @@ int main() {
 
     cout << "Profondeur maximale : " << tree->maxDepth() << endl;
 
-    //les messages d'erreur peuvent s'afficher au milieu des autres affichages precedents
+
+    //les messages d'erreur peuvent s'afficher au milieu des autres affichages precedents, si on n'ajoute pas la pause
     bool testGestionErreur = true;
     if (testGestionErreur) {
 
+        cout << "Pause dans le programme avant l'affichage de la gestion d'erreur, veuillez entrer un message (quelconque) "
+             << endl;
+        cin.ignore();
+
         //Test gestion d'erreur pour IntTree
-        IntTree* fils = root->getSon(-1);
+        IntTree *fils = root->getSon(-1);
         fils->display();
         delete fils;
 
@@ -84,7 +91,7 @@ int main() {
             cerr << "Erreur : " << e.what() << endl;
         }
 
-        Tree<float>* filss = tree->getSon(-1);
+        Tree<float> *filss = tree->getSon(-1);
         filss->display();
         delete filss;
     }

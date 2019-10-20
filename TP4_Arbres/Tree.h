@@ -121,7 +121,8 @@ Tree<T> *Tree<T>::getSon(int pos) {
     }
         //Si on a indique une mauvaise position ou bien si le noeud n'a aucun fils, on retourne le noeud lui-meme
     catch (exception const &e) {
-        cerr << "Erreur : " << e.what() << ", le fils demande n'existe pas,  un arbre avec le meme noeud que le pere est retourne " <<endl;
+        cerr << "Erreur : " << e.what()
+             << ", le fils demande n'existe pas,  un arbre avec le meme noeud que le pere est retourne " << endl;
         //On ne peut pas renvoyer un Tree(0) comme avec IntTree, on renvoit donc un Tree contenant data
         return new Tree(data);
     }
@@ -237,14 +238,14 @@ int Tree<T>::minDepth() {
     q_count.push(1);
 
     Tree *current;
-    int count;
+    int count = 0;
 
     while (!q_tree.empty()) {
         current = q_tree.front();
         count = q_count.front();
 
         if (current->nbSons() == 0) {
-            return count;
+            break;
         }
 
         for (int i = 0; i < current->nbSons(); i++) {
@@ -254,6 +255,7 @@ int Tree<T>::minDepth() {
         q_tree.pop();
         q_count.pop();
     }
+    return count;
 }
 
 
