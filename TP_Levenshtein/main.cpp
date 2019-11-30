@@ -11,8 +11,9 @@ using namespace std;
 
 
 void affiche_modifications(const vector<vector<int> > &d, const string &s1, const string &s2, bool damerau = false) {
-    //minimum entre les differentes valeurs en haut, a gauche, et en haut a gauche
-    // valeur actuelle de d[i][j]; et position dans la matrice
+    // mini : minimum entre les differentes valeurs en haut, a gauche, et en haut a gauche
+    // current_value : valeur actuelle de d[i][j]
+    // current_i, current_j :  position dans la matrice
     int mini, current_value, current_i = d.size() - 1, current_j = d[0].size() - 1;
     //On utilise une pile pour stocker les operations a effectuer quand on remonte le chemin dans la matrice
     stack<string> pile;
